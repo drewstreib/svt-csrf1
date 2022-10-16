@@ -8,5 +8,8 @@ COPY ./app /code/app
 COPY ./static /code/static
 COPY ./templates /code/templates
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
+# start just one worker so that global variables work in this simple test environment
+ENV WEB_CONCURRENCY=1
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80", "--workers", "1"]
 
