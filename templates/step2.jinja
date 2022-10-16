@@ -7,8 +7,10 @@
     <h1>Synopsys Vulnerable Test - CSRF1 step2</h1>
     <h3>Status:</h3>
     <p> {{ status }} </p>
+{% if success -%}
     <h3>Form input1:</h3>
     <p> {{ input1|safe }} </p>
+{% endif %}
     <p><a href="/">Return to /</a></p>
 </body>
 </html>

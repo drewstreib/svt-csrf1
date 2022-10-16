@@ -80,12 +80,14 @@ async def read_item(
     svt_session: Union[str, None] = Cookie(default=None),
 ):
     global sessions
+    success = 0;
     if svt_session:
         if svt_session in sessions:
             if "csrf_token" in sessions[svt_session]:
                 if csrf_token:
                     if sessions[svt_session]["csrf_token"] == csrf_token:
                         status = "SUCCESS!"
+                        success = 1
                     else:
                         status = "FAILURE: csrf_token passed, but incorrect"
                 else:
@@ -99,5 +101,5 @@ async def read_item(
 
     return templates.TemplateResponse(
         "step2.jinja",
-        {"request": request, "status": status, "input1": input1},
+        {"request": request, "status": status, "success": success, "input1": input1},
     )
