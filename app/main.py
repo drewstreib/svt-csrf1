@@ -27,19 +27,19 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
 async def read_item(
-    request: Request, svts_session: Union[str, None] = Cookie(default=None)
+    request: Request, svt_session: Union[str, None] = Cookie(default=None)
 ):
     global sessions
     csrf_token = str(uuid.uuid4())[:8]
-    session_valid = svts_session in sessions
+    session_valid = svt_session in sessions
     if session_valid:
-        sessions[svts_session]["csrf_token"] = csrf_token
+        sessions[svt_session]["csrf_token"] = csrf_token
 
     return templates.TemplateResponse(
         "root.jinja",
         {
             "request": request,
-            "svts_session": svts_session,
+            "svt_session": svt_session,
             "session_valid": session_valid,
             "csrf_token": csrf_token,
         },
@@ -61,14 +61,14 @@ def create_session(request: Request, response_class=HTMLResponse):
     sessions[session_uuid] = {"valid": 1}
 
     response = templates.TemplateResponse("login.jinja", {"request": request})
-    response.set_cookie(key="svts_session", value=session_uuid)
+    response.set_cookie(key="svt_session", value=session_uuid)
     return response
 
 
 @app.post("/logout")
 def del_session(request: Request, response_class=HTMLResponse):
     response = templates.TemplateResponse("logout.jinja", {"request": request})
-    response.delete_cookie("svts_session")
+    response.delete_cookie("svt_session")
     return response
 
 
@@ -77,25 +77,25 @@ async def read_item(
     request: Request,
     csrf_token: str = Form(None),
     input1: str = Form(None),
-    svts_session: Union[str, None] = Cookie(default=None),
+    svt_session: Union[str, None] = Cookie(default=None),
 ):
     global sessions
-    if svts_session:
-        if svts_session in sessions:
-            if "csrf_token" in sessions[svts_session]:
+    if svt_session:
+        if svt_session in sessions:
+            if "csrf_token" in sessions[svt_session]:
                 if csrf_token:
-                    if sessions[svts_session]["csrf_token"] == csrf_token:
+                    if sessions[svt_session]["csrf_token"] == csrf_token:
                         status = "SUCCESS!"
                     else:
                         status = "FAILURE: csrf_token passed, but incorrect"
                 else:
                     status = "FAILURE: No csrf_token passed"
             else:
-                status = "FAILURE: Somehow, svts_session on server has no csrf_token set. Did you even visit the form?"
+                status = "FAILURE: Somehow, svt_session on server has no csrf_token set. Did you even visit the form?"
         else:
-            status = "FAILURE: svts_session cookie is stale"
+            status = "FAILURE: svt_session cookie is stale"
     else:
-        status = "FAILURE: No svts_session cookie was sent"
+        status = "FAILURE: No svt_session cookie was sent"
 
     return templates.TemplateResponse(
         "step2.jinja",

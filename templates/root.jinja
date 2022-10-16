@@ -1,15 +1,15 @@
 <html>
 <head>
-    <title>Synopsys Vulnerable Test Site</title>
+    <title>Synopsys Vuln Test</title>
     <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
 </head>
 <body>
-    <h1>Synopsys Vulnerable Test Site - CSRF1</h1>
+    <h1>Synopsys Vuln Test - CSRF1</h1>
     <p>
         Note that your browser has received a session cookie and a hidden CSRF token as a hidden input field.
         This form must be submitted with the the same session cookie, and with the CSRF token matching this session.
     </p>
-{% if svts_session -%}
+{% if svt_session -%}
     {% if session_valid -%}
         <p>You are logged in!
         <form method="post" action="/logout">
@@ -24,7 +24,7 @@
             </p>
         </form>
     {% else -%}
-        <p>You have a svts_session cookie but it is stale.
+        <p>You have a svt_session cookie but it is stale.
         <form method="post" action="/login">
             <input type="submit" value="Login">
         </form>
